@@ -72,7 +72,7 @@ class MAMLGaussianMLPPolicy(StochasticPolicy, Serializable):
         obs_dim = env_spec.observation_space.flat_dim
         self.action_dim = env_spec.action_space.flat_dim
         
-        print(self.action_dim)
+        #print(self.action_dim)
         self.n_hidden = len(hidden_sizes)
         self.hidden_nonlinearity = hidden_nonlinearity
         self.output_nonlinearity = output_nonlinearity
