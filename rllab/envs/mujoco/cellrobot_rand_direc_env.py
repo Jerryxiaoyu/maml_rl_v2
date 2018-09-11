@@ -154,7 +154,7 @@ class CellRobotRandDirectEnv(MujocoEnv, Serializable):
         
         state = self._state
         notdone = np.isfinite(state).all() \
-            and state[2] >= 0.2 and state[2] <= 1.0
+                  and state[2] >= 0.1 and state[2] <= 0.6
         done = not notdone
         ob = self.get_current_obs()
         return Step(ob, float(reward), done)
