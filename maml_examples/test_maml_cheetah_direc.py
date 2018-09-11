@@ -104,7 +104,7 @@ for step_i, initial_params_file in zip(range(len(step_sizes)), initial_params_fi
             plot=True,
         )
         # get return from the experiment
-        with open('data/local/cheetahdirec-test/test'+str(run_id)+'/progress.csv', 'r') as f:
+        with open('../data/local/cheetahdirec-test/test'+str(run_id)+'/progress.csv', 'r') as f:
             reader = csv.reader(f, delimiter=',')
             i = 0
             row = None
@@ -118,18 +118,18 @@ for step_i, initial_params_file in zip(range(len(step_sizes)), initial_params_fi
             avg_returns.append(returns)
 
         if make_video:
-            data_loc = 'data/local/cheetahdirec-test/test'+str(run_id)+'/'
-            save_loc = 'data/local/cheetahdirec-test/test/'
+            data_loc = '../data/local/cheetahdirec-test/test'+str(run_id)+'/'
+            save_loc = '../data/local/cheetahdirec-test/test/'
             param_file = initial_params_file
             if param_file is None:
                 param_file = rand_file
             save_prefix = save_loc + names[step_i] + '_goal_' + str(goal)
             video_filename = save_prefix + 'prestep.' + file_ext
-            os.system('python scripts/sim_policy.py ' + param_file + ' --speedup=4 --max_path_length=500 --video_filename='+video_filename)
+            os.system('python ../scripts/sim_policy.py ' + param_file + ' --speedup=4 --max_path_length=500 --video_filename='+video_filename)
             for itr_i in range(3):
                 param_file = data_loc + 'itr_' + str(itr_i)  + '.pkl'
                 video_filename = save_prefix + 'step_'+str(itr_i)+'.'+file_ext
-                os.system('python scripts/sim_policy.py ' + param_file + ' --speedup=4 --max_path_length=500 --video_filename='+video_filename)
+                os.system('python ../scripts/sim_policy.py ' + param_file + ' --speedup=4 --max_path_length=500 --video_filename='+video_filename)
 
     all_avg_returns.append(avg_returns)
 

@@ -7,7 +7,7 @@ from rllab.envs.mujoco.half_cheetah_env_rand import HalfCheetahEnvRand
 from rllab.envs.mujoco.half_cheetah_env_oracle import HalfCheetahEnvOracle
 from rllab.envs.normalized_env import normalize
 from rllab.misc.instrument import stub, run_experiment_lite
-
+from rllab.envs.mujoco.half_cheetah_env_rand_disable import HalfCheetahEnvRandDisable
 stub(globals())
 
 import joblib
@@ -15,12 +15,12 @@ import numpy as np
 import pickle
 import tensorflow as tf
 
-file1 = '../data/local/trpo-maml-cheetah200/maml1_fbs20_mbs40_flr_0.1_mlr0.01/itr_775.pkl'
+file1 = '../data/local/trpo-maml-cheetah2disable200/maml1_fbs20_mbs40_flr_0.1_mlr0.01/itr_775.pkl'
 file2 = 'data/s3/bugfix-trpo-maml-cheetah200/randenv/itr_475.pkl'
 file3 = 'data/s3/bugfix-trpo-maml-cheetah200/oracleenv/itr_975.pkl'
 
-make_video = True  # generate results if False, run code to make video if True
-run_id = 1  # for if you want to run this script in multiple terminals (need to have different ids)
+make_video = False  # generate results if False, run code to make video if True
+run_id = 3  # for if you want to run this script in multiple terminals (need to have different ids)
 
 if not make_video:
     test_num_goals = 40
@@ -30,8 +30,8 @@ if not make_video:
 else:
     np.random.seed(2)
     test_num_goals = 2
-    #goals = [0.1, 0.8]
-    goals = [0.0, 2.0]
+    
+    goals = [3]
     file_ext = 'mp4'  # can be mp4 or gif
 print(goals)
 
@@ -40,7 +40,7 @@ names = ['maml','pretrain','random', 'oracle']
 exp_names = [gen_name + name for name in names]
 
 step_sizes = [0.1, 0.02, 0.1, 0.0]
-initial_params_files = [file1, None, None, None]
+initial_params_files = [file1]#, None, None, None
 
 all_avg_returns = []
 for step_i, initial_params_file in zip(range(len(step_sizes)), initial_params_files):
@@ -52,8 +52,8 @@ for step_i, initial_params_file in zip(range(len(step_sizes)), initial_params_fi
             env = normalize(HalfCheetahEnvOracle())
             n_itr = 1
         else:
-            env = normalize(HalfCheetahEnvRand())
-            n_itr = 4
+            env = normalize(HalfCheetahEnvRandDisable())
+            n_itr = 5
         env = TfEnv(env)
         policy = GaussianMLPPolicy(  # random policy
             name='policy',
@@ -90,12 +90,12 @@ for step_i, initial_params_file in zip(range(len(step_sizes)), initial_params_fi
             # will be used
             seed=2, #1  # don't set the seed for oracle, since it's already deterministic.
             exp_prefix='cheetah_test',
-            exp_name='test' + str(run_id),
+            exp_name='test_disable' + str(run_id),
             plot=True,
         )
         # get return from the experiment
         import csv
-        with open('../data/local/cheetah-test/test'+str(run_id)+'/progress.csv', 'r') as f:
+        with open('../data/local/cheetah-test/test_disable'+str(run_id)+'/progress.csv', 'r') as f:
             reader = csv.reader(f, delimiter=',')
             i = 0
             row = None
@@ -109,8 +109,8 @@ for step_i, initial_params_file in zip(range(len(step_sizes)), initial_params_fi
             avg_returns.append(returns)
 
         if make_video:
-            data_loc = '../data/local/cheetah-test/test'+str(run_id)+'/'
-            save_loc = '../data/local/cheetah-test/test'+str(run_id)+'/save/'
+            data_loc = '../data/local/cheetah-test/test_disable'+str(run_id)+'/'
+            save_loc = '../data/local/cheetah-test/test_disable'+str(run_id)+'/save/'
             param_file = initial_params_file
             save_prefix = save_loc + names[step_i] + '_goal_' + str(goal)
             video_filename = save_prefix + 'prestep.' + file_ext

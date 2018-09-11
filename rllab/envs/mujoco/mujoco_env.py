@@ -83,6 +83,7 @@ class MujocoEnv(Env):
             self.init_qpos = init_qpos
         self.dcom = None
         self.current_com = None
+        
         self.reset()
         super(MujocoEnv, self).__init__()
 
@@ -92,6 +93,14 @@ class MujocoEnv(Env):
         bounds = self.model.actuator_ctrlrange
         lb = bounds[:, 0]
         ub = bounds[:, 1]
+        self.action_space_ture = spaces.Box(lb, ub)  # 我家的
+        
+        
+        bounds = np.array([[-1,1],  ## TODO  我改的
+                           [-1,1]])
+        lb = bounds[:, 0]
+        ub = bounds[:, 1]
+        
         return spaces.Box(lb, ub)
 
     @property
@@ -103,6 +112,7 @@ class MujocoEnv(Env):
 
     @property
     def action_bounds(self):
+        
         return self.action_space.bounds
 
     def reset_mujoco(self, init_state=None):
@@ -173,11 +183,19 @@ class MujocoEnv(Env):
         ]).ravel()
 
     def inject_action_noise(self, action):
+        #########################
+        bounds = self.model.actuator_ctrlrange
+        lb = bounds[:, 0]
+        ub = bounds[:, 1]
+        action_space = spaces.Box(lb, ub)
+        ######################原来没有
+        
         # generate action noise
         noise = self.action_noise * \
                 np.random.normal(size=action.shape)
         # rescale the noise to make it proportional to the action bounds
-        lb, ub = self.action_bounds
+        #lb, ub = self.action_bounds  # 原来有
+        lb, ub = action_space.bounds
         noise = 0.5 * (ub - lb) * noise
         return action + noise
 

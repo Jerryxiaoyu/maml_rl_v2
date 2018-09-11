@@ -32,7 +32,7 @@ file1 = 'data/local/posticml-trpo-maml-antLineDirect-200/maml11_fbs20_mbs40_flr_
 
 
 make_video = True  # generate results if False, run code to make video if True
-run_id = 7  # for if you want to run this script in multiple terminals (need to have different ids for each run)
+run_id = 6  # for if you want to run this script in multiple terminals (need to have different ids for each run)
 
 if not make_video:
 	test_num_goals = 40
@@ -126,57 +126,8 @@ for step_i, initial_params_file in zip(range(len(step_sizes)), initial_params_fi
 
 
 
-		# get return from the experiment
-		with open('data/local/ant-test-posticml/test'+str(run_id)+'/progress.csv', 'r') as f:
-			reader = csv.reader(f, delimiter=',')
-			i = 0
-			row = None
-			returns = []
-			for row in reader:
-				i+=1
-				if i ==1:
-					ret_idx = row.index('AverageReturn')
-				else:
-					returns.append(float(row[ret_idx]))
-			avg_returns.append(returns)
-
-		if make_video:
-			data_loc = 'data/local/ant-test-posticml/test'+str(run_id)+'/'
-			save_loc = 'data/local/ant-test-posticml/test'+str(run_id)+'/'
-			param_file = initial_params_file
-			save_prefix = save_loc + names[step_i] + '_goal_' + str(goal)
-			video_filename = save_prefix + 'prestep.' + file_ext
-			os.system('python scripts/sim_policy.py ' + param_file + ' --speedup=4 --max_path_length=300 --video_filename='+video_filename)
-			for itr_i in range(1,200):
-				param_file = data_loc + 'itr_' + str(itr_i)  + '.pkl'
-				video_filename = save_prefix + 'step_'+str(itr_i)+'.'+file_ext
-				os.system('python scripts/sim_policy.py ' + param_file + ' --speedup=4 --max_path_length=300 --video_filename='+video_filename)
 
 
-
-
-	all_avg_returns.append(avg_returns)
-
-
-
-	task_avg_returns = []
-	for itr in range(len(all_avg_returns[step_i][0])):
-		task_avg_returns.append([ret[itr] for ret in all_avg_returns[step_i]])
-
-	if not make_video:
-		results = {'task_avg_returns': task_avg_returns}
-		with open(exp_names[step_i] + '.pkl', 'wb') as f:
-			pickle.dump(results, f)
-
-
-for i in range(len(initial_params_files)):
-	returns = []
-	std_returns = []
-	returns.append(np.mean([ret[itr] for ret in all_avg_returns[i]]))
-	std_returns.append(np.std([ret[itr] for ret in all_avg_returns[i]]))
-	print(initial_params_files[i])
-	print(returns)
-	print(std_returns)
 
 
 

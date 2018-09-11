@@ -36,9 +36,9 @@ class AntEnvRandLineDirec(MujocoEnv, Serializable):
         if goal_vel is not None:
             self.goal_theta = goal_vel
         elif self._goal_vel is None:
-            self.goal_theta = np.random.uniform(-pi/2, pi/2)
+             self.goal_theta = np.random.uniform(-pi/2, pi/2)
 
-
+    #    self.goal_theta = goal_vel
         self.reset_mujoco(init_state)
         self.model.forward()
         self.current_com = self.model.data.com_subtree[0]
@@ -54,10 +54,7 @@ class AntEnvRandLineDirec(MujocoEnv, Serializable):
         u = np.array([cos(self.goal_theta), sin(self.goal_theta)])
         proj_par = comvel_xy.dot(np.transpose(u))
         proj_ver = abs(u[0] * comvel_xy[1] - u[1] * comvel_xy[0])
-        forward_reward = 1 * proj_par - 0.5 * proj_ver
-
-
-
+        forward_reward = 0.5 * proj_par - 1 * proj_ver
 
         lb, ub = self.action_bounds
         scaling = (ub - lb) * 0.5

@@ -75,6 +75,7 @@ class VectorizedSampler(BaseSampler):
 
             policy_time += time.time() - t
             t = time.time()
+            #print(actions)
             next_obses, rewards, dones, env_infos = self.vec_env.step(actions, reset_args)
             env_time += time.time() - t
 

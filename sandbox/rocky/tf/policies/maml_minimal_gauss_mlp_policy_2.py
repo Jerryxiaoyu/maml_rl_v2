@@ -31,19 +31,20 @@ class MAMLGaussianMLPPolicy(StochasticPolicy, Serializable):
             env_spec,
             hidden_sizes=(32, 32),
             learn_std=True,
-            init_std=0.5,
+            init_std=1.0,
             adaptive_std=False,
             std_share_network=False,
             std_hidden_sizes=(32, 32),
-            min_std=1e-1,#1e-6
+            min_std=1e-6,
             std_hidden_nonlinearity=tf.nn.tanh,
             hidden_nonlinearity=tf.nn.tanh,
-            output_nonlinearity=tf.identity,
+            output_nonlinearity=tf.nn.sigmoid,#tf.identity
             mean_network=None,
             std_network=None,
             std_parametrization='exp',
             grad_step_size=1.0,
             stop_grad=False,
+            action_dim = 2,
     ):
         """
         :param env_spec:
@@ -70,9 +71,7 @@ class MAMLGaussianMLPPolicy(StochasticPolicy, Serializable):
         assert isinstance(env_spec.action_space, Box)
 
         obs_dim = env_spec.observation_space.flat_dim
-        self.action_dim = env_spec.action_space.flat_dim
-        
-        print(self.action_dim)
+        self.action_dim = env_spec.action_space.flat_dim#action_dim
         self.n_hidden = len(hidden_sizes)
         self.hidden_nonlinearity = hidden_nonlinearity
         self.output_nonlinearity = output_nonlinearity

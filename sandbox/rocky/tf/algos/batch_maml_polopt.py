@@ -16,6 +16,9 @@ from sandbox.rocky.tf.samplers.vectorized_sampler import VectorizedSampler
 from sandbox.rocky.tf.spaces import Discrete
 from rllab.sampler.stateful_pool import singleton_pool
 
+import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+
 class BatchMAMLPolopt(RLAlgorithm):
     """
     Base class for batch sampling-based policy optimization methods, with maml.
@@ -131,7 +134,10 @@ class BatchMAMLPolopt(RLAlgorithm):
         # TODO - make this a util
         flatten_list = lambda l: [item for sublist in l for item in sublist]
 
-        with tf.Session() as sess:
+        config = tf.ConfigProto()
+        config.gpu_options.allow_growth = True
+     
+        with tf.Session(config=config) as sess:
             # Code for loading a previous policy. Somewhat hacky because needs to be in sess.
             if self.load_policy is not None:
                 import joblib

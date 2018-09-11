@@ -22,6 +22,7 @@ class MAMLNPO(BatchMAMLPolopt):
             optimizer_args=None,
             step_size=0.01,
             use_maml=True,
+         
             **kwargs):
         assert optimizer is not None  # only for use with MAML TRPO
         if optimizer is None:
@@ -32,15 +33,19 @@ class MAMLNPO(BatchMAMLPolopt):
             default_args = dict(
                 batch_size=None,
                 max_epochs=1,
+            
             )
             optimizer = FirstOrderOptimizer(**default_args)
         self.optimizer = optimizer
         self.step_size = step_size
         self.use_maml = use_maml
         self.kl_constrain_step = -1  # needs to be 0 or -1 (original pol params, or new pol params)
+       
         super(MAMLNPO, self).__init__(**kwargs)
 
     def make_vars(self, stepnum='0'):
+        from gym import error, spaces
+        
         # lists over the meta_batch_size
         obs_vars, action_vars, adv_vars = [], [], []
         for i in range(self.meta_batch_size):

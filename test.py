@@ -1,79 +1,32 @@
-from sandbox.rocky.tf.algos.maml_trpo import MAMLTRPO
-from rllab.baselines.linear_feature_baseline import LinearFeatureBaseline
-from rllab.baselines.gaussian_mlp_baseline import GaussianMLPBaseline
-from rllab.envs.mujoco.ant_env_rand import AntEnvRand
+import rllab.mujoco_py
+from rllab.envs.mujoco.half_cheetah_env import HalfCheetahEnv
+from rllab.envs.mujoco.hopper_env import HopperEnv
+from rllab.envs.mujoco.inverted_double_pendulum_env import InvertedDoublePendulumEnv
+from rllab.envs.mujoco.point_env import PointEnv
+from rllab.envs.mujoco.simple_humanoid_env import SimpleHumanoidEnv
+from rllab.envs.mujoco.swimmer_env import SwimmerEnv
+from rllab.envs.mujoco.walker2d_env import Walker2DEnv
+from rllab.envs.mujoco.gather.point_gather_env import PointGatherEnv
+from rllab.envs.mujoco.gather.swimmer_gather_env import SwimmerGatherEnv
+from rllab.envs.mujoco.gather.ant_gather_env import AntGatherEnv
+from rllab.envs.mujoco.maze.point_maze_env import PointMazeEnv
+from rllab.envs.mujoco.maze.swimmer_maze_env import SwimmerMazeEnv
+from rllab.envs.mujoco.maze.ant_maze_env import AntMazeEnv
+
+
+
 from rllab.envs.mujoco.ant_env_rand_goal import AntEnvRandGoal
-from rllab.envs.mujoco.ant_env_rand_direc import AntEnvRandDirec
-from rllab.envs.normalized_env import normalize
-from rllab.misc.instrument import stub, run_experiment_lite
-from sandbox.rocky.tf.policies.maml_minimal_gauss_mlp_policy import MAMLGaussianMLPPolicy
-from sandbox.rocky.tf.envs.base import TfEnv
+from rllab.envs.mujoco.ant_env_rand_goal_oracle import AntEnvRandGoalOracle
+
+env = AntGatherEnv()
+ob_space = env.observation_space
+act_space = env.action_space
+ob = env.reset()
+assert ob_space.contains(ob)
 
 
-import numpy as np
-import tensorflow as tf
 
-stub(globals())
-
-from rllab.misc.instrument import VariantGenerator, variant
-
-
-class VG(VariantGenerator):
-
-    @variant
-    def fast_lr(self):
-        return [0.1]
-
-    @variant
-    def meta_step_size(self):
-        return [0.01] # sometimes 0.02 better
-
-    @variant
-    def fast_batch_size(self):
-        return [20,30]
-
-    @variant
-    def meta_batch_size(self):
-        return [40,50] # at least a total batch size of 400. (meta batch size*fast batch size)
-
-    @variant
-    def seed(self):
-        return [1]
-
-    @variant
-    def task_var(self):  # fwd/bwd task or goal vel task
-        # 0 for fwd/bwd, 1 for goal vel (kind of), 2 for goal pose
-        return [0]
-
-
-# should also code up alternative KL thing
-
-variants = VG().variants()
-print(variants)
-
-
-for v in variants:
-    task_var = v['task_var']
-    #oracle = v['oracle']
-
-
-    print('v  :  ',v)
-    print('task:  ',task_var)
-    #print('oracle: ',oracle)
-    print('---------------------')
-
-make_video = True
-'''''
-if not make_video:
-    test_num_goals = 10
-    np.random.seed(2)
-    goals = np.random.uniform(0.0, 3.0, size=(test_num_goals, ))
-else:
-    np.random.seed(1)
-    test_num_goals = 2  
-    goals = [0.0, 3.0]
-    file_ext = 'mp4'  # can be mp4 or gif
-print(goals)
-'''''
-np.random.seed(0)
-np.random.rand(5)
+for _ in range(5000):
+    a = act_space.sample()
+    res = env.step(a)
+    env.render()

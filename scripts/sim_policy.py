@@ -6,6 +6,13 @@ import tensorflow as tf
 from rllab.misc.console import query_yes_no
 from rllab.sampler.utils import rollout
 
+''''
+usage
+
+python scripts/sim_policy.py   data/local/ant-test-posticml/test1/itr_2.pkl   --speedup=4 --max_path_length=300 --video_filename=data/local/ant-test-posticml/test1/prestep.mp4
+
+python scripts/sim_policy.py   data/local/posticml-trpo-maml-antLineDirect-200/maml1_fbs20_mbs40_flr_0.1_mlr0.01/itr_675.pkl   --speedup=4 --max_path_length=300 --video_filename=data/local/ant-test-posticml/test1/prestep.mp4
+'''''
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()

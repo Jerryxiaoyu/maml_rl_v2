@@ -37,7 +37,7 @@ class TfEnv(ProxyEnv):
 
     @cached_property
     def action_space(self):
-        return to_tf_space(self.wrapped_env.action_space)
+        return to_tf_space(self.wrapped_env.action_space) #
 
     @cached_property
     def spec(self):

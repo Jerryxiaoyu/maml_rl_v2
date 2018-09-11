@@ -46,6 +46,8 @@ class HalfCheetahEnvRandDirec(MujocoEnv, Serializable):
         obs = self.get_current_obs()
         return obs
 
+
+    
     def get_current_obs(self):
         obs = np.concatenate([
             self.model.data.qpos.flatten()[1:],

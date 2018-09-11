@@ -83,6 +83,8 @@ class NormalizedEnv(ProxyEnv, Serializable):
             scaled_action = np.clip(scaled_action, lb, ub)
         else:
             scaled_action = action
+            
+        #print(scaled_action)
         wrapped_step = self._wrapped_env.step(scaled_action)
         next_obs, reward, done, info = wrapped_step
         if self._normalize_obs:
