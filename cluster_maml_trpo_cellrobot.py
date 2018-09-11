@@ -13,6 +13,12 @@ from sandbox.rocky.tf.envs.base import TfEnv
 
 import tensorflow as tf
 
+import os
+from datetime import datetime
+import shutil
+import glob
+
+import vendor.ssh as ssh
 stub(globals())
 
 from rllab.misc.instrument import VariantGenerator, variant
@@ -26,7 +32,7 @@ class VG(VariantGenerator):
 
     @variant
     def meta_step_size(self):
-        return [0.01] # sometimes 0.02 better
+        return [0.01,0.02] # sometimes 0.02 better
 
     @variant
     def fast_batch_size(self):
@@ -34,7 +40,7 @@ class VG(VariantGenerator):
 
     @variant
     def meta_batch_size(self):
-        return [40] # at least a total batch size of 400. (meta batch size*fast batch size)
+        return [20] # at least a total batch size of 400. (meta batch size*fast batch size)
 
     @variant
     def seed(self):
@@ -46,6 +52,24 @@ class VG(VariantGenerator):
         return [1]
 
 
+ssh_FLAG = True
+
+
+exp_id =1
+variants = VG().variants()
+num = 0
+for v in variants:
+    num += 1
+    print('exp{}: '.format(num), v)
+
+ 
+    
+# SSH Config
+hostname = '2402:f000:6:3801:ee1c:d67d:4f92:55ad'#'2600:1f16:e7a:a088:805d:16d6:f387:62e5'
+username = 'drl'
+key_path = '/home/ubuntu/.ssh/id_rsa_dl'
+
+port = 22
 # should also code up alternative KL thing
 
 variants = VG().variants()
@@ -90,13 +114,13 @@ for v in variants:
         step_size=v['meta_step_size'],
         plot=False,
     )
-
+    exp_name = 'Cellrobot_trpo_maml' + task_var + '_' + str(max_path_length)+ '_EXP'+str(exp_id)
     run_experiment_lite(
         algo.train(),
-        exp_prefix='Cellrobot_trpo_maml' + task_var + '_' + str(max_path_length),
+        exp_prefix=exp_name,
         exp_name='maml'+str(int(use_maml))+'_fbs'+str(v['fast_batch_size'])+'_mbs'+str(v['meta_batch_size'])+'_flr_' + str(v['fast_lr'])  + '_mlr' + str(v['meta_step_size']),
         # Number of parallel workers for sampling
-        n_parallel=2,
+        n_parallel=71,
         # Only keep the snapshot parameters for the last iteration
         snapshot_mode="gap",
         snapshot_gap=10,
@@ -110,3 +134,9 @@ for v in variants:
         # plot=True,
         # terminate_machine=False,
     )
+    
+    if ssh_FLAG:
+        local_dir = os.path.abspath('data/local/'+exp_name+'/')
+        remote_dir = '/home/drl/PycharmProjects/DeployedProjects/CR_CPG/Hyper_lab/log-files/AWS_logfiles/'+exp_name+'/'
+        ssh.upload(local_dir, remote_dir, hostname=hostname , port=port , username=username ,
+                   pkey_path=key_path)
