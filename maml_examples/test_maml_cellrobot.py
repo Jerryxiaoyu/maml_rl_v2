@@ -19,9 +19,14 @@ from math import pi
 from rllab.envs.mujoco.cellrobot_rand_direc_env import CellRobotRandDirectEnv
 stub(globals())
 
-file1 = '../data/local/posticml-trpo-maml-antvel-200/maml1_fbs20_mbs40_flr_0.1_mlr0.01/itr_0.pkl'
+EXP_root_dir = '/home/drl/PycharmProjects/maml_rl-master/data/AWS_data/Cellrobot-trpo-mamldirec-500-EXP1/maml1_fbs20_mbs20_flr_0.1_mlr0.01/'
+
+
+file1 = 'itr_20.pkl'
 file2 = 'data/s3/posticml-trpo-maml-ant200/randenv100traj/itr_575.pkl'
 file3 = 'data/s3/posticml-trpo-maml-ant200/oracleenv100traj/itr_550.pkl'
+
+file1 = os.path.join(EXP_root_dir,file1)
 
 make_video = True  # generate results if False, run code to make video if True
 run_id = 1  # for if you want to run this script in multiple terminals (need to have different ids for each run)
@@ -33,7 +38,8 @@ if not make_video:
 else:
     np.random.seed(1)
     test_num_goals = 2
-    goals = np.random.uniform(-pi/3, pi/3, size=(test_num_goals, ))
+    #goals = np.random.uniform(-pi/3, pi/3, size=(test_num_goals, ))
+    goals=[pi/4.0, -pi/4.0]
     file_ext = 'mp4'  # can be mp4 or gif
 print(goals)
 
@@ -51,7 +57,7 @@ for step_i, initial_params_file in zip(range(len(step_sizes)), initial_params_fi
     avg_returns = []
 
     for goal in goals:
-
+        print('goal = ()', goal/3.141692*180)
         if initial_params_file is not None and 'oracle' in initial_params_file:
             env = normalize(AntEnvOracle())
             n_itr = 1
@@ -76,31 +82,31 @@ for step_i, initial_params_file in zip(range(len(step_sizes)), initial_params_fi
             load_policy=initial_params_file,
             baseline=baseline,
             batch_size=4000,  # 2x
-            max_path_length=200,
+            max_path_length=1000,
             n_itr=n_itr,
             reset_arg=goal,
             optimizer_args={'init_learning_rate': step_sizes[step_i], 'tf_optimizer_args': {'learning_rate': 0.5*step_sizes[step_i]}, 'tf_optimizer_cls': tf.train.GradientDescentOptimizer}
         )
 
 
-        run_experiment_lite(
-            algo.train(),
-            # Number of parallel workers for sampling
-            n_parallel=4,
-            # Only keep the snapshot parameters for the last iteration
-            snapshot_mode="all",
-            # Specifies the seed for the experiment. If this is not provided, a random seed
-            # will be used
-            seed=1,
-            exp_prefix='ant_test_posticml',
-            exp_name='test' + str(run_id),
-            #plot=True,
-        )
+        # run_experiment_lite(
+        #     algo.train(),
+        #     # Number of parallel workers for sampling
+        #     n_parallel=4,
+        #     # Only keep the snapshot parameters for the last iteration
+        #     snapshot_mode="all",
+        #     # Specifies the seed for the experiment. If this is not provided, a random seed
+        #     # will be used
+        #     seed=1,
+        #     exp_prefix='CellRobot-ICRA-test',
+        #     exp_name='test' + str(run_id),
+        #     #plot=True,
+        # )
 
 
 
         # get return from the experiment
-        with open('../data/local/ant-test-posticml/test'+str(run_id)+'/progress.csv', 'r') as f:
+        with open(os.path.join(EXP_root_dir, 'test'+str(run_id)+'/progress.csv'), 'r') as f:
             reader = csv.reader(f, delimiter=',')
             i = 0
             row = None
@@ -114,8 +120,10 @@ for step_i, initial_params_file in zip(range(len(step_sizes)), initial_params_fi
             avg_returns.append(returns)
 
         if make_video:
-            data_loc = '../data/local/Cellrobot-test-posticml/test'+str(run_id)+'/'
-            save_loc = '../data/local/Cellrobot-test-posticml/test/'
+            data_loc = os.path.join(EXP_root_dir, 'test'+str(run_id)+'/')
+            save_loc =  os.path.join(EXP_root_dir, 'monitor/')
+            if os.path.exists(save_loc) is False:
+                os.mkdir(save_loc)
             param_file = initial_params_file
             save_prefix = save_loc + names[step_i] + '_goal_' + str(goal)
             video_filename = save_prefix + 'prestep.' + file_ext

@@ -42,7 +42,7 @@ class CellRobotRandDirectEnv(MujocoEnv, Serializable):
        
         self.goal_num = goal_num
 
-        self.goal_theta = pi / 4.0
+        self.goal_theta = 0.0
         self.quat_init = [0.49499825, -0.49997497, 0.50500175, 0.49997499]
         self.t = 0
         self.CPG_controller = CPG_network(position_vector)
@@ -119,9 +119,12 @@ class CellRobotRandDirectEnv(MujocoEnv, Serializable):
         goal_vel = reset_args
         if goal_vel is not None:
             self._goal_vel = goal_vel
+           
             
         else:
             self._goal_vel = np.random.uniform(-pi/3, pi/3)
+
+        self.goal_theta = self._goal_vel
         self.goal_direction = -1.0 if self._goal_vel < 1.5 else 1.0
         self.reset_mujoco(init_state)
         self.model.forward()
