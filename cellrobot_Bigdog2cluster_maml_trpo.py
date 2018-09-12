@@ -25,6 +25,7 @@ stub(globals())
 from rllab.misc.instrument import VariantGenerator, variant
 
 
+
 class VG(VariantGenerator):
     
     @variant
