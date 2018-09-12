@@ -53,7 +53,7 @@ class VG(VariantGenerator):
         return [1]
 
 
-ssh_FLAG = False
+ssh_FLAG = True
 
 exp_id = 1
 variants = VG().variants()
@@ -119,7 +119,7 @@ for v in variants:
         exp_name='maml' + str(int(use_maml)) + '_fbs' + str(v['fast_batch_size']) + '_mbs' + str(
             v['meta_batch_size']) + '_flr_' + str(v['fast_lr']) + '_mlr' + str(v['meta_step_size']),
         # Number of parallel workers for sampling
-        n_parallel=8,
+        n_parallel=71,
         # Only keep the snapshot parameters for the last iteration
         snapshot_mode="gap",
         snapshot_gap=2,
@@ -136,6 +136,6 @@ for v in variants:
     
     if ssh_FLAG:
         local_dir = os.path.abspath('data/local/' + exp_name + '/')
-        remote_dir = '/home/drl/PycharmProjects/DeployedProjects/CR_CPG/Hyper_lab/log-files/AWS_logfiles/' + exp_name + '/'
+        remote_dir = '/home/drl/PycharmProjects/maml_rl-master/data/AWS_data/' + exp_name + '/'
         ssh.upload(local_dir, remote_dir, hostname=hostname, port=port, username=username,
                    pkey_path=key_path)
