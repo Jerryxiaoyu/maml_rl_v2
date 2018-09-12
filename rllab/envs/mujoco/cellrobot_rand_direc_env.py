@@ -107,12 +107,13 @@ class CellRobotRandDirectEnv(MujocoEnv, Serializable):
         quat_tranfor = quaternion_multiply(quat, quaternion_inverse(self.quat_init))
         angle = euler_from_quaternion(quat_tranfor, 'rxyz')
         
+        #print(self.goal_theta)
         return np.concatenate([
             self.get_body_com("torso").flat,
             # self.sim.data.qpos.flat[:3],  # 3:7 表示角度
             # self.sim.data.qpos.flat[:7],  # 3:7 表示角度
             np.array(angle),
-            np.array([self.goal_theta])
+            np.array([angle[2] - self.goal_theta])
         ]).reshape(-1)
     @overrides
     def reset(self, init_state=None, reset_args=None, **kwargs):

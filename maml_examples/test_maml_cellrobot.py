@@ -89,19 +89,19 @@ for step_i, initial_params_file in zip(range(len(step_sizes)), initial_params_fi
         )
 
 
-        # run_experiment_lite(
-        #     algo.train(),
-        #     # Number of parallel workers for sampling
-        #     n_parallel=4,
-        #     # Only keep the snapshot parameters for the last iteration
-        #     snapshot_mode="all",
-        #     # Specifies the seed for the experiment. If this is not provided, a random seed
-        #     # will be used
-        #     seed=1,
-        #     exp_prefix='CellRobot-ICRA-test',
-        #     exp_name='test' + str(run_id),
-        #     #plot=True,
-        # )
+        run_experiment_lite(
+            algo.train(),
+            # Number of parallel workers for sampling
+            n_parallel=4,
+            # Only keep the snapshot parameters for the last iteration
+            snapshot_mode="all",
+            # Specifies the seed for the experiment. If this is not provided, a random seed
+            # will be used
+            seed=1,
+            exp_prefix='CellRobot-ICRA-test',
+            exp_name='test' + str(run_id),
+            #plot=True,
+        )
 
 
 
