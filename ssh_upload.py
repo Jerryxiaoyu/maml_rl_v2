@@ -57,10 +57,10 @@ if __name__ == '__main__':
      
         key_path = '/home/ubuntu/.ssh/id_rsa_dl'
         key = paramiko.RSAKey.from_private_key_file(key_path)
-        dir_list = ['__']
+        dir_list = ['Cellrobot-trpo-mamldirec-500-EXP1']
         #dir_list = ['Sep_08GA_CPG_Exp10']
         for exp_group_dir in dir_list:
-            local_dir = '/home/ubuntu/jerry/projects/CR_CPG_RL/log_files/'+exp_group_dir+'/'
+            local_dir = '/home/ubuntu/jerry/projects/maml_rl_v2/data/local/'+exp_group_dir+'/'
             remote_dir = '/home/drl/PycharmProjects/maml_rl-master/data/AWS_data/'+exp_group_dir+'/'
             print('Uploading server No.{}...'.format(num))
             upload(local_dir, remote_dir, hostname=hostname[num], port=port[num], username=username[num],

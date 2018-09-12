@@ -120,7 +120,7 @@ for v in variants:
         exp_prefix=exp_name,
         exp_name='maml'+str(int(use_maml))+'_fbs'+str(v['fast_batch_size'])+'_mbs'+str(v['meta_batch_size'])+'_flr_' + str(v['fast_lr'])  + '_mlr' + str(v['meta_step_size']),
         # Number of parallel workers for sampling
-        n_parallel=71,
+        n_parallel=8,
         # Only keep the snapshot parameters for the last iteration
         snapshot_mode="gap",
         snapshot_gap=10,
