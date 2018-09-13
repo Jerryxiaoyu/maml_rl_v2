@@ -3,6 +3,7 @@ from rllab.baselines.linear_feature_baseline import LinearFeatureBaseline
 from rllab.baselines.gaussian_mlp_baseline import GaussianMLPBaseline
 from rllab.envs.mujoco.cellrobot_rand_direc_env import CellRobotRandDirectEnv
 from rllab.envs.mujoco.cellrobot_rand_direc2_env import CellRobotRandDirect2Env
+from rllab.envs.mujoco.cellrobot_rand_direc_pi4_env import CellRobotRandDirectpi4Env
 from rllab.envs.mujoco.ant_env_rand_goal import AntEnvRandGoal
 from rllab.envs.mujoco.ant_env_rand_direc import AntEnvRandDirec
 from rllab.envs.normalized_env import normalize
@@ -51,12 +52,12 @@ class VG(VariantGenerator):
     @variant
     def task_var(self):  # fwd/bwd task or goal vel task
         # 0 for fwd/bwd, 1 for goal vel (kind of), 2 for goal pose
-        return [1]
+        return [0]
 
 
 ssh_FLAG = False
 
-exp_id = 4
+exp_id = 6
 variants = VG().variants()
 num = 0
 for v in variants:
@@ -81,8 +82,8 @@ for v in variants:
     task_var = v['task_var']
     
     if task_var == 0:
-        env = TfEnv(normalize(AntEnvRandDirec()))
-        task_var = 'lalalala'
+        env = TfEnv(normalize(CellRobotRandDirectpi4Env()))
+        task_var = 'directpi-4'
     elif task_var == 1:
         env = TfEnv(normalize(CellRobotRandDirectEnv()))
         task_var = 'direc'
@@ -120,7 +121,7 @@ for v in variants:
         exp_name='maml' + str(int(use_maml)) + '_fbs' + str(v['fast_batch_size']) + '_mbs' + str(
             v['meta_batch_size']) + '_flr_' + str(v['fast_lr']) + '_mlr' + str(v['meta_step_size']),
         # Number of parallel workers for sampling
-        n_parallel=8,
+        n_parallel=35,
         # Only keep the snapshot parameters for the last iteration
         snapshot_mode="gap",
         snapshot_gap=2,
