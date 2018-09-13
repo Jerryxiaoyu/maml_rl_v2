@@ -29,7 +29,7 @@ file3 = 'data/s3/posticml-trpo-maml-ant200/oracleenv100traj/itr_550.pkl'
 file1 = os.path.join(EXP_root_dir,file1)
 
 make_video = True  # generate results if False, run code to make video if True
-run_id = 1  # for if you want to run this script in multiple terminals (need to have different ids for each run)
+run_id = 2  # for if you want to run this script in multiple terminals (need to have different ids for each run)
 
 if not make_video:
     test_num_goals = 40
@@ -88,7 +88,7 @@ for step_i, initial_params_file in zip(range(len(step_sizes)), initial_params_fi
             optimizer_args={'init_learning_rate': step_sizes[step_i], 'tf_optimizer_args': {'learning_rate': 0.5*step_sizes[step_i]}, 'tf_optimizer_cls': tf.train.GradientDescentOptimizer}
         )
 
-
+        test_dir_name = 'test' + str(run_id)+'_'+str(step_i)+'_'+str(goal)
         run_experiment_lite(
             algo.train(),
             # Number of parallel workers for sampling
@@ -99,14 +99,14 @@ for step_i, initial_params_file in zip(range(len(step_sizes)), initial_params_fi
             # will be used
             seed=1,
             exp_prefix='CellRobot-ICRA-test',
-            exp_name='test' + str(run_id),
+            exp_name=test_dir_name,
             #plot=True,
         )
 
 
 
         # get return from the experiment
-        with open(os.path.join(EXP_root_dir, 'test'+str(run_id)+'/progress.csv'), 'r') as f:
+        with open(os.path.join('data/local/CellRobot-ICRA-test', test_dir_name+'/progress.csv'), 'r') as f:
             reader = csv.reader(f, delimiter=',')
             i = 0
             row = None
@@ -120,7 +120,7 @@ for step_i, initial_params_file in zip(range(len(step_sizes)), initial_params_fi
             avg_returns.append(returns)
 
         if make_video:
-            data_loc = os.path.join(EXP_root_dir, 'test'+str(run_id)+'/')
+            data_loc = os.path.join('data/local/CellRobot-ICRA-test', test_dir_name+'/')
             save_loc =  os.path.join(EXP_root_dir, 'monitor/')
             if os.path.exists(save_loc) is False:
                 os.mkdir(save_loc)

@@ -129,6 +129,7 @@ for v in variants:
         seed=v["seed"],
         mode="local",
         # mode="ec2",
+        use_gpu=True,
         variant=v,
         # plot=True,
         # terminate_machine=False,
