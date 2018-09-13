@@ -2,6 +2,7 @@ from sandbox.rocky.tf.algos.maml_trpo import MAMLTRPO
 from rllab.baselines.linear_feature_baseline import LinearFeatureBaseline
 from rllab.baselines.gaussian_mlp_baseline import GaussianMLPBaseline
 from rllab.envs.mujoco.cellrobot_rand_direc_env import CellRobotRandDirectEnv
+from rllab.envs.mujoco.cellrobot_rand_direc2_env import CellRobotRandDirect2Env
 from rllab.envs.mujoco.ant_env_rand_goal import AntEnvRandGoal
 from rllab.envs.mujoco.ant_env_rand_direc import AntEnvRandDirec
 from rllab.envs.normalized_env import normalize
@@ -86,8 +87,8 @@ for v in variants:
         env = TfEnv(normalize(CellRobotRandDirectEnv()))
         task_var = 'direc'
     elif task_var == 2:
-        env = TfEnv(normalize(AntEnvRandGoal()))
-        task_var = 'papapap'
+        env = TfEnv(normalize(CellRobotRandDirect2Env()))
+        task_var = 'direc2'
     policy = MAMLGaussianMLPPolicy(
         name="policy",
         env_spec=env.spec,

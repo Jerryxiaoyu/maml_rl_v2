@@ -36,7 +36,7 @@ state_M =np.array([[1., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
 
 position_vector = [0.9005710154022419, 0.19157649858525766, 0.20363844865472536, -0.2618038524762938, -0.04764016477204058, -0.4923544636213292, -0.30514082693887024, 0.7692727139092137, 0.7172509186944478, -0.6176943450166859, -0.43476218435592706, 0.7667223977603919, 0.29081693103406536, 0.09086369237435465, 0.0, 0.0, -0.0171052262902362, 0.0, 0.0, 0.0, 0.0, 0.0004205454597565903, 0.0, 0.0, 0.0, 0.0, 0.0, -0.6989070655586036, 1.231416257452789, 1.188419262405775, -1.0974581723778125, -1.023151598620554, -0.40304458466288917, 0.5513169936393982, 0.646385738643396, 1.3694066886743392, 0.7519699447089043, 0.06997050535309216, -1.5500743998481212, 0.8190474090403703]
 
-class CellRobotRandDirectEnv(MujocoEnv, Serializable):
+class CellRobotRandDirect2Env(MujocoEnv, Serializable):
     FILE = 'cellrobot_Quadruped_float.xml'
     def __init__(self, goal_num=None, *args, **kwargs):
        
@@ -47,7 +47,7 @@ class CellRobotRandDirectEnv(MujocoEnv, Serializable):
         self.t = 0
         self.CPG_controller = CPG_network(position_vector)
         
-        super(CellRobotRandDirectEnv, self).__init__(*args, **kwargs)
+        super(CellRobotRandDirect2Env, self).__init__(*args, **kwargs)
        
         Serializable.__init__(self, *args, **kwargs)
      
