@@ -19,10 +19,10 @@ from math import pi
 from rllab.envs.mujoco.cellrobot_rand_direc_env import CellRobotRandDirectEnv
 stub(globals())
 
-EXP_root_dir = '/home/drl/PycharmProjects/maml_rl-master/data/AWS_data/Cellrobot-trpo-mamldirec-500-EXP1/maml1_fbs20_mbs20_flr_0.1_mlr0.01/'
+EXP_root_dir = '/home/drl/PycharmProjects/maml_rl-master/data/AWS_data/Cellrobot-trpo-mamldirec-500-EXP2/maml1_fbs20_mbs20_flr_0.1_mlr0.01/'
 
 
-file1 = 'itr_20.pkl'
+file1 = 'itr_50.pkl'
 file2 = 'data/s3/posticml-trpo-maml-ant200/randenv100traj/itr_575.pkl'
 file3 = 'data/s3/posticml-trpo-maml-ant200/oracleenv100traj/itr_550.pkl'
 

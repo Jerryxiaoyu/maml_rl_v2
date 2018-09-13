@@ -33,7 +33,7 @@ class VG(VariantGenerator):
     
     @variant
     def meta_step_size(self):
-        return [0.01, 0.02]  # sometimes 0.02 better
+        return [0.02,0.01, ]  # sometimes 0.02 better
     
     @variant
     def fast_batch_size(self):
@@ -119,10 +119,10 @@ for v in variants:
         exp_name='maml' + str(int(use_maml)) + '_fbs' + str(v['fast_batch_size']) + '_mbs' + str(
             v['meta_batch_size']) + '_flr_' + str(v['fast_lr']) + '_mlr' + str(v['meta_step_size']),
         # Number of parallel workers for sampling
-        n_parallel=71,
+        n_parallel=31,
         # Only keep the snapshot parameters for the last iteration
         snapshot_mode="gap",
-        snapshot_gap=10,
+        snapshot_gap=2,
         sync_s3_pkl=True,
         # Specifies the seed for the experiment. If this is not provided, a random seed
         # will be used
