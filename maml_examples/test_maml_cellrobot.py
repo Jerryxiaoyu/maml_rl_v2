@@ -37,9 +37,9 @@ if not make_video:
     goals = np.random.uniform(-pi/3, pi/3, size=(test_num_goals, ))
 else:
     np.random.seed(1)
-    test_num_goals = 2
+    test_num_goals = 1
     #goals = np.random.uniform(-pi/3, pi/3, size=(test_num_goals, ))
-    goals=[pi/4.0, -pi/4.0]
+    goals=[ -pi/4.0]
     file_ext = 'mp4'  # can be mp4 or gif
 print(goals)
 
@@ -48,7 +48,7 @@ gen_name = 'Cellrobot_results_'
 names = ['maml']#,'pretrain','random', 'oracle'
 exp_names = [gen_name + name for name in names]
 
-step_sizes = [0.1, 0.2, 1.0, 0.0]
+step_sizes = [0.1, None, None, None]
 initial_params_files = [file1, None, None, None]
 
 
@@ -69,8 +69,10 @@ for step_i, initial_params_file in zip(range(len(step_sizes)), initial_params_fi
             name='policy',
             env_spec=env.spec,
             hidden_nonlinearity=tf.nn.relu,
-            hidden_sizes=(100, 100),
+            output_nonlinearity=tf.nn.sigmoid,
+            hidden_sizes=(64, 64),
         )
+        
 
         if initial_params_file is not None:
             policy = None
@@ -81,8 +83,8 @@ for step_i, initial_params_file in zip(range(len(step_sizes)), initial_params_fi
             policy=policy,
             load_policy=initial_params_file,
             baseline=baseline,
-            batch_size=4000,  # 2x
-            max_path_length=1000,
+            batch_size=400,  # 2x
+            max_path_length=500,
             n_itr=n_itr,
             reset_arg=goal,
             optimizer_args={'init_learning_rate': step_sizes[step_i], 'tf_optimizer_args': {'learning_rate': 0.5*step_sizes[step_i]}, 'tf_optimizer_cls': tf.train.GradientDescentOptimizer}
@@ -92,7 +94,7 @@ for step_i, initial_params_file in zip(range(len(step_sizes)), initial_params_fi
         run_experiment_lite(
             algo.train(),
             # Number of parallel workers for sampling
-            n_parallel=4,
+            n_parallel=1,
             # Only keep the snapshot parameters for the last iteration
             snapshot_mode="all",
             # Specifies the seed for the experiment. If this is not provided, a random seed
@@ -106,7 +108,7 @@ for step_i, initial_params_file in zip(range(len(step_sizes)), initial_params_fi
 
 
         # get return from the experiment
-        with open(os.path.join('data/local/CellRobot-ICRA-test', test_dir_name+'/progress.csv'), 'r') as f:
+        with open(os.path.join('../data/local/CellRobot-ICRA-test', test_dir_name+'/progress.csv'), 'r') as f:
             reader = csv.reader(f, delimiter=',')
             i = 0
             row = None
@@ -120,7 +122,7 @@ for step_i, initial_params_file in zip(range(len(step_sizes)), initial_params_fi
             avg_returns.append(returns)
 
         if make_video:
-            data_loc = os.path.join('data/local/CellRobot-ICRA-test', test_dir_name+'/')
+            data_loc = os.path.join('../data/local/CellRobot-ICRA-test', test_dir_name+'/')
             save_loc =  os.path.join(EXP_root_dir, 'monitor/')
             if os.path.exists(save_loc) is False:
                 os.mkdir(save_loc)

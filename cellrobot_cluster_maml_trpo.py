@@ -53,9 +53,9 @@ class VG(VariantGenerator):
         return [1]
 
 
-ssh_FLAG = True
+ssh_FLAG = False
 
-exp_id = 3
+exp_id = 4
 variants = VG().variants()
 num = 0
 for v in variants:
@@ -119,7 +119,7 @@ for v in variants:
         exp_name='maml' + str(int(use_maml)) + '_fbs' + str(v['fast_batch_size']) + '_mbs' + str(
             v['meta_batch_size']) + '_flr_' + str(v['fast_lr']) + '_mlr' + str(v['meta_step_size']),
         # Number of parallel workers for sampling
-        n_parallel=31,
+        n_parallel=8,
         # Only keep the snapshot parameters for the last iteration
         snapshot_mode="gap",
         snapshot_gap=2,
@@ -129,7 +129,7 @@ for v in variants:
         seed=v["seed"],
         mode="local",
         # mode="ec2",
-        use_gpu=True,
+        use_gpu=False,
         variant=v,
         # plot=True,
         # terminate_machine=False,

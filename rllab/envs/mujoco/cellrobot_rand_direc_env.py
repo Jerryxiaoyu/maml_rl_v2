@@ -124,8 +124,8 @@ class CellRobotRandDirectEnv(MujocoEnv, Serializable):
             
         else:
             self._goal_vel = np.random.uniform(-pi/3, pi/3)
-
         self.goal_theta = self._goal_vel
+        #print(self.goal_theta)
         self.goal_direction = -1.0 if self._goal_vel < 1.5 else 1.0
         self.reset_mujoco(init_state)
         self.model.forward()
@@ -135,24 +135,40 @@ class CellRobotRandDirectEnv(MujocoEnv, Serializable):
         return obs
 
     def step(self, a):
+        #print(a)
+        u = np.array([cos(self.goal_theta), sin(self.goal_theta)])
         action = self.CPG_transfer(a, self.CPG_controller)
+        xposbefore = self.get_body_com("torso")[0]
+        yposbefore = self.get_body_com("torso")[1]
         
+        comvel_xy_before = np.array([xposbefore, yposbefore])
+        proj_parbefore = comvel_xy_before.dot(np.transpose(u))
         
         self.forward_dynamics(action)
+
+        xposafter = self.get_body_com("torso")[0]
+        yposafter = self.get_body_com("torso")[1]
+
+        comvel_xy_after = np.array([xposafter, yposafter])
+        proj_parafter = comvel_xy_after.dot(np.transpose(u))
+        
         comvel = self.get_body_comvel("torso")
         comvel_xy = np.array([comvel[0], comvel[1]])
-        u = np.array([cos(self.goal_theta), sin(self.goal_theta)])
+        
         proj_par = comvel_xy.dot(np.transpose(u))
         proj_ver = abs(u[0] * comvel_xy[1] - u[1] * comvel_xy[0])
-        forward_reward = 5* proj_par - 1 * proj_ver
+        #forward_reward = 1* proj_par - 10 * proj_ver
 
+        #print('reward: ', (proj_parafter - proj_parbefore) /0.01, 5 * proj_ver)
+        forward_reward = 1 * (proj_parafter - proj_parbefore) /0.01 - 10 * proj_ver
+        
         # lb, ub = self.action_space_ture.bounds
         # scaling = (ub - lb) * 0.5
         # ctrl_cost = 0.5 * 1e-2 * np.sum(np.square(action / scaling))
         ctrl_cost=0
-        contact_cost = 0.5 * 1e-3 * np.sum(
-            np.square(np.clip(self.model.data.cfrc_ext, -1, 1))),
+        contact_cost = 0.5 * 1e-3 * np.sum(np.square(np.clip(self.model.data.cfrc_ext, -1, 1)))
         survive_reward = 0.05
+        #print('reward: ', forward_reward,-ctrl_cost, -contact_cost )
         reward = forward_reward - ctrl_cost - contact_cost + survive_reward
         
         
