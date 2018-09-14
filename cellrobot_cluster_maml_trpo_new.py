@@ -131,8 +131,8 @@ for v in variants:
         # Specifies the seed for the experiment. If this is not provided, a random seed
         # will be used
         seed=v["seed"],
-        #mode="local",
-        mode="ec2",
+        mode="local",
+        #mode="ec2",
         use_gpu=False,
         variant=v,
         # plot=True,
