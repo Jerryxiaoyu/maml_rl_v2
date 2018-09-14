@@ -5,6 +5,7 @@ from rllab.envs.mujoco.cellrobot_rand_direc_env import CellRobotRandDirectEnv
 from rllab.envs.mujoco.cellrobot_rand_direc2_env import CellRobotRandDirect2Env
 from rllab.envs.mujoco.cellrobot_rand_direc_pi4_env import CellRobotRandDirectpi4Env
 from rllab.envs.mujoco.cellrobot_rand_direc_pi4_env2 import CellRobotRandDirectpi4Env2
+from rllab.envs.mujoco.cellrobot_rand_direc_env_body import CellRobotRandDirectBodyEnv
 from rllab.envs.mujoco.ant_env_rand_goal import AntEnvRandGoal
 from rllab.envs.mujoco.ant_env_rand_direc import AntEnvRandDirec
 from rllab.envs.normalized_env import normalize
@@ -36,7 +37,7 @@ class VG(VariantGenerator):
     
     @variant
     def meta_step_size(self):
-        return [0.05,0.02, ]  # sometimes 0.02 better
+        return [0.02,0.05, ]  # sometimes 0.02 better
     
     @variant
     def fast_batch_size(self):
@@ -53,7 +54,7 @@ class VG(VariantGenerator):
     @variant
     def task_var(self):  # fwd/bwd task or goal vel task
         # 0 for fwd/bwd, 1 for goal vel (kind of), 2 for goal pose
-        return [0]
+        return [4]
 
 
 ssh_FLAG = False
@@ -91,9 +92,14 @@ for v in variants:
     elif task_var == 2:
         env = TfEnv(normalize(CellRobotRandDirect2Env()))
         task_var = 'direc2'
-    elif task_var == 2:
-        env = TfEnv(normalize(CellRobotRandDirectpi4Env2()))
+    elif task_var == 3:
+        env = TfEnv(normalize(CellRobotRandDirectpi4Env2()))  #
         task_var = 'direcpi-4-2'
+    elif task_var == 4:
+        env = TfEnv(normalize(CellRobotRandDirectBodyEnv()))    #利用body位置做sate
+        task_var = 'direc-body'
+     
+    
     policy = MAMLGaussianMLPPolicy(
         name="policy",
         env_spec=env.spec,

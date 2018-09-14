@@ -36,7 +36,7 @@ state_M =np.array([[1., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
 
 position_vector = [0.9005710154022419, 0.19157649858525766, 0.20363844865472536, -0.2618038524762938, -0.04764016477204058, -0.4923544636213292, -0.30514082693887024, 0.7692727139092137, 0.7172509186944478, -0.6176943450166859, -0.43476218435592706, 0.7667223977603919, 0.29081693103406536, 0.09086369237435465, 0.0, 0.0, -0.0171052262902362, 0.0, 0.0, 0.0, 0.0, 0.0004205454597565903, 0.0, 0.0, 0.0, 0.0, 0.0, -0.6989070655586036, 1.231416257452789, 1.188419262405775, -1.0974581723778125, -1.023151598620554, -0.40304458466288917, 0.5513169936393982, 0.646385738643396, 1.3694066886743392, 0.7519699447089043, 0.06997050535309216, -1.5500743998481212, 0.8190474090403703]
 
-class CellRobotRandDirectpi4Env2(MujocoEnv, Serializable):
+class CellRobotRandDirectBodyEnv(MujocoEnv, Serializable):
     FILE = 'cellrobot_Quadruped_float.xml'
     def __init__(self, goal_num=None, *args, **kwargs):
        
@@ -47,7 +47,7 @@ class CellRobotRandDirectpi4Env2(MujocoEnv, Serializable):
         self.t = 0
         self.CPG_controller = CPG_network(position_vector)
         
-        super(CellRobotRandDirectpi4Env2, self).__init__(*args, **kwargs)
+        super(CellRobotRandDirectBodyEnv, self).__init__(*args, **kwargs)
        
         Serializable.__init__(self, *args, **kwargs)
      
@@ -55,8 +55,10 @@ class CellRobotRandDirectpi4Env2(MujocoEnv, Serializable):
         
     def sample_goals(self, num_goals):
         # for fwd/bwd env, goal direc is backwards if < 1.5, forwards if > 1.5
-        return np.random.uniform(-pi/2, pi/2, (num_goals, ))
-      
+        return np.random.uniform(-pi/3, pi/3, (num_goals, ))
+        
+   
+   
     
     def get_current_obs(self):
         quat = self.model.data.qpos.flat[3:7]
@@ -68,7 +70,7 @@ class CellRobotRandDirectpi4Env2(MujocoEnv, Serializable):
         return np.concatenate([
             self.get_body_com("torso").flat,
             # self.sim.data.qpos.flat[:3],  # 3:7 表示角度
-            #self.model.data.qpos.flat[:7],  # 3:7 表示角度
+            # self.sim.data.qpos.flat[:7],  # 3:7 表示角度
             np.array(angle),
             np.array([angle[2] - self.goal_theta])
         ]).reshape(-1)
@@ -77,10 +79,11 @@ class CellRobotRandDirectpi4Env2(MujocoEnv, Serializable):
         goal_vel = reset_args
         if goal_vel is not None:
             self._goal_vel = goal_vel
-
+           
+            
         else:
-            self._goal_vel = np.random.uniform(-pi/2, pi/2)
-        self.goal_theta = - pi/4.0
+            self._goal_vel = np.random.uniform(-pi/3, pi/3)
+        self.goal_theta = self._goal_vel
         #print(self.goal_theta)
         self.goal_direction = -1.0 if self._goal_vel < 1.5 else 1.0
         self.reset_mujoco(init_state)
@@ -116,7 +119,7 @@ class CellRobotRandDirectpi4Env2(MujocoEnv, Serializable):
         #forward_reward = 1* proj_par - 10 * proj_ver
 
         #print('reward: ', (proj_parafter - proj_parbefore) /0.01, 5 * proj_ver)
-        forward_reward = 1 * (proj_parafter - proj_parbefore) /0.01 - 10 * proj_ver
+        forward_reward = 1 * (proj_parafter - proj_parbefore) /0.01 - 5 * proj_ver
         
         # lb, ub = self.action_space_ture.bounds
         # scaling = (ub - lb) * 0.5

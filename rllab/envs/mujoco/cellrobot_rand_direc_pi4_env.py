@@ -80,7 +80,7 @@ class CellRobotRandDirectpi4Env(MujocoEnv, Serializable):
 
         else:
             self._goal_vel = np.random.uniform(-pi/2, pi/2)
-        self.goal_theta = pi/4.0
+        self.goal_theta = -pi/4.0
         #print(self.goal_theta)
         self.goal_direction = -1.0 if self._goal_vel < 1.5 else 1.0
         self.reset_mujoco(init_state)
