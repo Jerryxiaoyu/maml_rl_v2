@@ -55,7 +55,7 @@ class CellRobotRandDirectpi4Env2(MujocoEnv, Serializable):
         
     def sample_goals(self, num_goals):
         # for fwd/bwd env, goal direc is backwards if < 1.5, forwards if > 1.5
-        return np.random.uniform(-pi/2, pi/2, (num_goals, ))
+        return np.random.uniform(-pi/3, pi/3, (num_goals, ))
       
     
     def get_current_obs(self):
@@ -79,8 +79,8 @@ class CellRobotRandDirectpi4Env2(MujocoEnv, Serializable):
             self._goal_vel = goal_vel
 
         else:
-            self._goal_vel = np.random.uniform(-pi/2, pi/2)
-        self.goal_theta = - pi/4.0
+            self._goal_vel = np.random.uniform(-pi/3, pi/3)
+        self.goal_theta = -pi/4.0
         #print(self.goal_theta)
         self.goal_direction = -1.0 if self._goal_vel < 1.5 else 1.0
         self.reset_mujoco(init_state)
@@ -116,7 +116,7 @@ class CellRobotRandDirectpi4Env2(MujocoEnv, Serializable):
         #forward_reward = 1* proj_par - 10 * proj_ver
 
         #print('reward: ', (proj_parafter - proj_parbefore) /0.01, 5 * proj_ver)
-        forward_reward = 1 * (proj_parafter - proj_parbefore) /0.01 - 10 * proj_ver
+        forward_reward = 1 * (proj_parafter - proj_parbefore) /0.01 - 5 * proj_ver
         
         # lb, ub = self.action_space_ture.bounds
         # scaling = (ub - lb) * 0.5

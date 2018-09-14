@@ -54,12 +54,12 @@ class VG(VariantGenerator):
     @variant
     def task_var(self):  # fwd/bwd task or goal vel task
         # 0 for fwd/bwd, 1 for goal vel (kind of), 2 for goal pose
-        return [4]
+        return [3]
 
 
 ssh_FLAG = False
 
-exp_id = 8
+exp_id = 9
 variants = VG().variants()
 num = 0
 for v in variants:
@@ -93,7 +93,7 @@ for v in variants:
         env = TfEnv(normalize(CellRobotRandDirect2Env()))
         task_var = 'direc2'
     elif task_var == 3:
-        env = TfEnv(normalize(CellRobotRandDirectpi4Env2()))  #
+        env = TfEnv(normalize(CellRobotRandDirectpi4Env2()))  # -pi/4 固定 body
         task_var = 'direcpi-4-2'
     elif task_var == 4:
         env = TfEnv(normalize(CellRobotRandDirectBodyEnv()))    #利用body位置做sate
@@ -131,7 +131,7 @@ for v in variants:
         exp_name='maml' + str(int(use_maml)) + '_fbs' + str(v['fast_batch_size']) + '_mbs' + str(
             v['meta_batch_size']) + '_flr_' + str(v['fast_lr']) + '_mlr' + str(v['meta_step_size']),
         # Number of parallel workers for sampling
-        n_parallel=16,
+        n_parallel=35,
         # Only keep the snapshot parameters for the last iteration
         snapshot_mode="gap",
         snapshot_gap=2,
