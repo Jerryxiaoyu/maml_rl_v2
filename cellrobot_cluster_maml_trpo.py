@@ -54,12 +54,12 @@ class VG(VariantGenerator):
     @variant
     def task_var(self):  # fwd/bwd task or goal vel task
         # 0 for fwd/bwd, 1 for goal vel (kind of), 2 for goal pose
-        return [4]
+        return [3]
 
 
 ssh_FLAG = False
 
-exp_id = 8
+exp_id = 9
 variants = VG().variants()
 num = 0
 for v in variants:
