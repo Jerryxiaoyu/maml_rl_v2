@@ -90,9 +90,7 @@ for v in variants:
      
     exp_name = 'Cellrobot_trpo_maml' + str(task_var) + '_' + str(max_path_length) + '_EXP' + str(exp_id)
 
-    filenames = glob.glob('*.py')  # put copy of all python files in log_dir
-    for filename in filenames:  # for reference
-        shutil.copy(filename, os.path.join('data/local', exp_name))
+    
     
     policy = MAMLGaussianMLPPolicy(
         name="policy",
@@ -133,8 +131,8 @@ for v in variants:
         # Specifies the seed for the experiment. If this is not provided, a random seed
         # will be used
         seed=v["seed"],
-        mode="local",
-        # mode="ec2",
+        #mode="local",
+        mode="ec2",
         use_gpu=False,
         variant=v,
         # plot=True,
