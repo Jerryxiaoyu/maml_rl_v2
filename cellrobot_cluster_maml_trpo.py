@@ -59,7 +59,7 @@ class VG(VariantGenerator):
 
 ssh_FLAG = False
 
-exp_id = 9
+exp_id = 8
 variants = VG().variants()
 num = 0
 for v in variants:
@@ -98,7 +98,12 @@ for v in variants:
     elif task_var == 4:
         env = TfEnv(normalize(CellRobotRandDirectBodyEnv()))    #利用body位置做sate
         task_var = 'direc-body'
-     
+
+    exp_name = 'Cellrobot_trpo_maml' + task_var + '_' + str(max_path_length) + '_EXP' + str(exp_id)
+
+    filenames = glob.glob('*.py')  # put copy of all python files in log_dir
+    for filename in filenames:  # for reference
+        shutil.copy(filename, os.path.join('data/local', exp_name))
     
     policy = MAMLGaussianMLPPolicy(
         name="policy",
@@ -124,7 +129,7 @@ for v in variants:
         step_size=v['meta_step_size'],
         plot=False,
     )
-    exp_name = 'Cellrobot_trpo_maml' + task_var + '_' + str(max_path_length) + '_EXP' + str(exp_id)
+    
     run_experiment_lite(
         algo.train(),
         exp_prefix=exp_name,
